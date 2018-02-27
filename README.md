@@ -4,7 +4,7 @@ for tracking device/user presence using an openwrt/lede access point
 
 data is sent from access point in two ways:
 1. a hostapd hook script (`assoc_wifi.sh`) is executed every time a wireless device has an association *event*
-2. a sync script (`sync_wifi.sh`) syncs the *state* of connected devices, executed via cron
+2. a sync script (`sync_wifi.sh`) syncs the *state* of connected devices, executed via cron (e.g. every 30 minutes)
 
 `launch_assoc_wifi.sh` is used to register the hostapd hook.
 

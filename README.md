@@ -1,11 +1,8 @@
-# devicetracker
+# openwrt_hass_devicetracker
 
-for tracking device/user presence using an openwrt/lede access point
+Package for a completely event-driven device/user presence tracker for [Home Assistant](https://github.com/home-assistant/home-assistant/) on an OpenWRT/LEDE access point. 
 
-data is sent from access point in two ways:
-1. a hostapd hook script (`assoc_wifi.sh`) is executed every time a wireless device has an association *event*
-2. a sync script (`sync_wifi.sh`) syncs the *state* of connected devices, executed via cron (e.g. every 30 minutes)
 
-`launch_assoc_wifi.sh` is used to register the hostapd hook.
+## Description
 
-data is sent to the event processor (`eventprocessor.py`) api endpoints `/event` and `/state`, respectively. the event processor uses apscheduler to create a job which sets the user's state to `gone` after some threshold (3 minutes). if the user reconnects within that timeframe, the job is deleted.
+Listens on hostapd wifi association events and then initiates appropriate service calls to the configured Home Assistant instance. On `AP-STA-CONNECTED` or `AP-STA-POLL-OK` the device is marked as seen with a timeout set by the `timeout_conn` config option. If an `AP-STA-DISCONNECTED` event is received, it is marked as seen with a timeout of `timeout_disc`.

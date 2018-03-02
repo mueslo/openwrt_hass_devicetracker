@@ -22,4 +22,4 @@ source /usr/lib/hass/functions.sh
 sync_state
 ```
 
-This ensures that missed disconnect events do not spuriously keep the device present for more than an hour. This will be implemented by default in a future version.
+This ensures that missed disconnect events do not spuriously keep the device present for more than an hour. This will be implemented by default in a future version or via an OpenWRT DeviceScanners in Home Assistant.

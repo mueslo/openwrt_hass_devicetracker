@@ -6,8 +6,8 @@ PROG=/usr/bin/hassd.sh
 PIDFILE=/var/run/hass.pid
 
 start_service() {
-    procd_open_instance "hass"
-    procd_set_param command "$PROG"
+    procd_open_instance hass
+    procd_set_param command $PROG
     procd_set_param pidfile $PIDFILE
     procd_close_instance
 }
@@ -25,4 +25,10 @@ stop_service() {
     for pid in $(all_child_pids $(cat $PIDFILE)); do
         kill $pid
     done
+}
+
+reload_service()
+{
+        stop
+        start
 }

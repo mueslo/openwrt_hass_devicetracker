@@ -4,7 +4,7 @@ function err_msg {
 }
 
 function register_hook {
-    logger -t $0 -p info "register_hook $@"
+    logger -t $0 -p debug "register_hook $@"
     if [ "$#" -ne 1 ]; then
         err_msg "register_hook missing interface"
         exit 1
@@ -15,7 +15,7 @@ function register_hook {
 }
 
 function post {
-    logger -t $0 -p info "post $@"
+    logger -t $0 -p debug "post $@"
     if [ "$#" -ne 1 ]; then
         err_msg "POST missing payload"
         exit 1
@@ -25,14 +25,22 @@ function post {
     config_get hass_host global host
     config_get hass_pw global pw
     
-    curl "$hass_host/api/services/device_tracker/see" -X POST \
+    resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
         -H 'Content-Type: application/json' \
         -H "X-HA-Access: $hass_pw" \
-        --data-binary "$payload"
+        --data-binary "$payload" 2>&1)
+    
+    if [ $? -eq 0 ]; then
+        level=debug
+    else
+        level=error
+    fi
+    
+    logger -t $0 -p $level "post response $resp"
 }
 
 function build_payload {
-    logger -t $0 -p info "build_payload $@"
+    logger -t $0 -p debug "build_payload $@"
     if [ "$#" -ne 3 ]; then
         err_msg "Invalid payload parameters"
         logger -t $0 -p warning "push_event not handled"
@@ -42,25 +50,21 @@ function build_payload {
     host=$2
     consider_home=$3
     
-    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":$consider_home,\"source_type\":\"router\"}"
+    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\"}"
 }
 
-function get_info {
-    cat /tmp/dhcp.leases | cut -f 2,3,4 -s -d" " | grep $1
+function get_ip {
+    # get ip for mac
+    grep "0x2\s\+$1" /proc/net/arp | cut -f 1 -s -d" "
 }
 
-function host_name {
-    # todo: if openwrt is not dhcp issuer, get hostname from local reverse dns
-    get_info $1 | cut -f 3 -s -d" "
-}
-
-function ip {
-    # todo: if openwrt is not dhcp issuer, get ip from arp table
-    get_info $1 | cut -f 2 -s -d" "
+function get_host_name {
+    # get hostname for mac
+    nslookup "$(get_ip $1)" | grep -oP "(?<=name = ).*$"
 }
 
 function push_event {
-    logger -t $0 -p info "push_event $@"
+    logger -t $0 -p debug "push_event $@"
     if [ "$#" -ne 3 ]; then
         err_msg "Illegal number of push_event parameters"
         exit 1
@@ -88,18 +92,18 @@ function push_event {
             ;;
     esac
 
-    post $(build_payload "$mac" "$(host_name $mac)" "$timeout")
+    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout")
 }
 
 function sync_state {
-    logger -t $0 -p info "sync_state $@"
+    logger -t $0 -p debug "sync_state $@"
 
     config_get hass_timeout_conn global timeout_conn
 
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         maclist=`iw dev $interface station dump | grep Station | cut -f 2 -s -d" "`
         for mac in $maclist; do
-            post $(build_payload "$mac" "$(host_name $mac)" "$hass_timeout_conn")
+            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn") &
         done
     done
 }

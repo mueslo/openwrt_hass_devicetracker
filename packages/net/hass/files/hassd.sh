@@ -1,7 +1,7 @@
 #!/bin/sh
 # todo: hostapd white (black) list so we don't have to listen to all APs
 
-source "/lib/functions.sh"
+source /lib/functions.sh
 config_load hass
 
 logger -t $0 -p info "Starting up"
@@ -22,7 +22,7 @@ while read line ; do
     interface=$(echo "$line" | grep -oP '"path":"hostapd\.\K[^"]*(?="\} \}$)')
     if [ $? = 0 ]
     then
-        logger -t $0 "$interface is up, setting up hook"
+        logger -t $0 -p info "$interface is up, setting up hook"
         register_hook $interface
     fi
         

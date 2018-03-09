@@ -9,6 +9,10 @@ Listens on hostapd wifi association events and then initiates appropriate servic
 
 Since restarting your access points removes any scripts connected via `hostapd_cli -a`, this package includes a daemon which monitors ubus for added APs so restarting/reconfiguring your radios doesn't kill the service.
 
+## Installation
+
+Simple `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from releases and `opkg install <downloaded_file>`. Then you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`.
+
 ## Note on missed events
 
 If Home Assistant or the OpenWRT access point is restarted frequently or unreliable in other ways, you should reduce the very long default timeout for connected devices, since a disconnect event may be missed. However, since association events for connected devices can happen as infrequently as every 2-4 hours, you might want to then add a cronjob which synchronizes the state to Home Assistant at least twice as often as your timeout for connected devices `timeout_conn`. A good value for this might be a timeout of 1 hour and a sync every 30 minutes. The cronjob should look like:

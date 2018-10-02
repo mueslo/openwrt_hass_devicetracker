@@ -23,13 +23,13 @@ function post {
     payload=$1
     
     config_get hass_host global host
-    config_get auth_type global authtype
+    config_get hass_token global token 0
     config_get hass_pw global pw
     
-    if [$authtype -eq "legacy"] then
-        auth_head = "X-HA-Access: $hass_pw"
-    elif [$authtype -eq "token"] then
-        auth_head = "Authorization: Bearer $hass_pw"
+    if [ $hass_token -ne 0 ]; then
+        auth_head="Authorization: Bearer $hass_token"
+    else
+        auth_head="X-HA-Access: $hass_pw"
     fi
     
     resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \

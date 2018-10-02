@@ -23,11 +23,11 @@ function post {
     payload=$1
     
     config_get hass_host global host
-    config_get hass_pw global pw
+    config_get hass_token global token
     
     resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
         -H 'Content-Type: application/json' \
-        -H "X-HA-Access: $hass_pw" \
+        -H "Authorization: Bearer $hass_token" \
         --data-binary "$payload" 2>&1)
     
     if [ $? -eq 0 ]; then

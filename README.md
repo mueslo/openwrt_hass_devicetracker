@@ -15,7 +15,7 @@ Simple `opkg install hass` once it is added to the OpenWRT repositories. Until t
 
 ### Authentication
 
-due to auth changes in home assistant there are 2 ways of authing with home assistant, the prefered option is a long lived token that can be generated. To configue it with this, set the auth option to `token` and put the token in the `pw` option. 
+due to auth changes in home assistant there are 2 ways of authing with home assistant, the prefered option is a long lived token that can be generated. There are 2 options, and it will prefer `token` if both are configured
 
 ## Note on missed events
 

@@ -23,10 +23,10 @@ function post {
     payload=$1
     
     config_get hass_host global host
-    config_get hass_token global token 0
+    config_get hass_token global token "0"
     config_get hass_pw global pw
     
-    if [ $hass_token -ne 0 ]; then
+    if [ $hass_token -ne "0" ]; then
         auth_head="Authorization: Bearer $hass_token"
     else
         auth_head="X-HA-Access: $hass_pw"

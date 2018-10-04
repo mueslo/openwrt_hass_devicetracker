@@ -9,6 +9,10 @@ Listens on hostapd wifi association events and then initiates appropriate servic
 
 Since restarting your access points removes any scripts connected via `hostapd_cli -a`, this package includes a daemon which monitors ubus for added APs so restarting/reconfiguring your radios doesn't kill the service.
 
+## Building
+
+A docker image is provided for convenience of generating an OpenWRT package without having to set up the build environment. Simply run `docker-compose run pkgbuild`. If successful, the created package will be located in `build/bin/packages/<ARCH>/packages/`. If your UID is not 1000, you may need to `chmod 777 build/bin`.
+
 ## Installation
 
 Simple `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from releases and `opkg install <downloaded_file>`. Then you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`.

@@ -1,0 +1,9 @@
+version: '2'
+services:
+    pkgbuild:
+        build:
+            context: .
+            dockerfile: build/Dockerfile
+        volumes: 
+            - ./packages/net/hass:/home/openwrt/sdk/feeds/packages/net/hass:ro
+            - ./build/bin:/home/openwrt/sdk/bin:rw

@@ -34,7 +34,7 @@ function post {
     
     resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
         -H 'Content-Type: application/json' \
-        -H "$auth_head" \
+        -H '$auth_head' \
         --data-binary "$payload" 2>&1)
     
     if [ $? -eq 0 ]; then

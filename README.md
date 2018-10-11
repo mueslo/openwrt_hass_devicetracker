@@ -15,7 +15,7 @@ A docker image is provided for convenience of generating an OpenWRT package with
 
 ## Installation
 
-Simple `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from releases and `opkg install <downloaded_file>`. Then you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`.
+Simply `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from releases and `opkg install <downloaded_file>`. Then you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`.
 
 ## Note on missed events
 
@@ -24,7 +24,7 @@ If Home Assistant or the OpenWRT access point is restarted frequently or unrelia
 ```
 #!/bin/sh
 
-source "/lib/functions.sh"
+source /lib/functions.sh
 config_load hass
 
 source /usr/lib/hass/functions.sh

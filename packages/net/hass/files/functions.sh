@@ -60,7 +60,7 @@ function get_ip {
 
 function get_host_name {
     # get hostname for mac
-    nslookup "$(get_ip $1)" | grep -oP "(?<=name = ).*$"
+    nslookup "$(get_ip $1)" | grep -o "name = .*$" | cut -d ' ' -f 3
 }
 
 function push_event {

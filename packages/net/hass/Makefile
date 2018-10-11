@@ -17,7 +17,7 @@ define Package/hass
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Wireless device tracker for Home Assistant
-	DEPENDS:=+hostapd-utils +curl +grep
+	DEPENDS:=+hostapd-utils +curl
 	PKGARCH:=all
 endef
 

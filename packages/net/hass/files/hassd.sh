@@ -19,7 +19,7 @@ sync_state
 # will run in subshell
 ubus listen ubus.object.add | \
 while read line ; do
-    interface=$(echo "$line" | grep -oP '"path":"hostapd\.\K[^"]*(?="\} \}$)')
+    interface=$(echo "$line" | grep -o '"path":"hostapd\.[^"]*"' | cut -d '"' -f 4 | cut -d '.' -f 2)
     if [ $? = 0 ]
     then
         logger -t $0 -p info "$interface is up, setting up hook"

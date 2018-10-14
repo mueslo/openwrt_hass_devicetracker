@@ -26,7 +26,7 @@ function post {
     config_get hass_token global token "0"
     config_get hass_pw global pw
     
-    if [ $hass_token != "0" ]; then
+    if [ "$hass_token" != "0" ]; then
         auth_head="Authorization: Bearer $hass_token"
     else
         auth_head="X-HA-Access: $hass_pw"
@@ -34,7 +34,7 @@ function post {
     
     resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
         -H 'Content-Type: application/json' \
-        -H '$auth_head' \
+        -H "$auth_head" \
         --data-binary "$payload" 2>&1)
     
     if [ $? -eq 0 ]; then

@@ -15,7 +15,7 @@ Simple `opkg install hass` once it is added to the OpenWRT repositories. Until t
 
 ### Authentication
 
-Due to auth changes in Home Assistant there are now 2 authentication methods, the prefered option is a long lived token that can be generated from the UI. If both are configured token auth will be prefered, since API password auth is deprecated.
+Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a long-lived access token that can be generated from the web UI. The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
 
 ## Note on missed events
 

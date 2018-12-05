@@ -23,6 +23,7 @@ function post {
     payload=$1
     
     config_get hass_host global host
+    config_get hass_port global port
     config_get hass_token global token "0"
     config_get hass_pw global pw
     
@@ -32,10 +33,18 @@ function post {
         auth_head="X-HA-Access: $hass_pw"
     fi
     
-    resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
-        -H 'Content-Type: application/json' \
-        -H "$auth_head" \
-        --data-binary "$payload" 2>&1)
+    payload_length=$(echo -n $payload | wc -c)
+
+    resp=`(echo 'POST /api/services/device_tracker/see HTTP/1.1'
+           echo 'Host: '$hass_host
+           echo $auth_head
+           echo 'Content-Type: application/json'
+           echo 'Content-Length: '$payload_length
+           echo 'Connection: Close'
+           echo
+           echo $payload;
+           sleep 1
+          ) | nc $hass_host 8123`
     
     if [ $? -eq 0 ]; then
         level=debug

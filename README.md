@@ -15,7 +15,11 @@ A docker image is provided for convenience of generating an OpenWRT package with
 
 ## Installation
 
-Simply `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from releases and `opkg install <downloaded_file>`. Then you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`.
+Simply `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from [releases](https://github.com/mueslo/openwrt_hass_devicetracker/releases) and `opkg install <downloaded_file>`.
+
+### Configuration
+
+Once the package is installed, you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
 
 ### Authentication
 

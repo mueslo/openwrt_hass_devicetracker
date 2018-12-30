@@ -17,7 +17,7 @@ define Package/hass
 	SECTION:=net
 	CATEGORY:=Network
 	TITLE:=Wireless device tracker for Home Assistant
-	DEPENDS:=+hostapd-utils +curl
+	DEPENDS:=+hostapd-utils +!CONFIG_BUSYBOX_DEFAULT_NETCAT:netcat
 	PKGARCH:=all
 endef
 

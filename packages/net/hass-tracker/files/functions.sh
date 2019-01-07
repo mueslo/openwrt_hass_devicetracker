@@ -48,7 +48,7 @@ post() {
 
 build_payload() {
     logger -t $0 -p debug "build_payload $@"
-    if [ "$#" -ne 3 ]; then
+    if [ "$#" -ne 4 ]; then
         err_msg "Invalid payload parameters"
         logger -t $0 -p warning "push_event not handled"
         exit 1
@@ -56,8 +56,9 @@ build_payload() {
     mac=$1
     host=$2
     consider_home=$3
+    source_name=$4
     
-    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\"}"
+    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\",\"attributes\":{\"source_name\":\"$source_name\"}}"
 }
 
 get_ip() {
@@ -95,6 +96,7 @@ push_event() {
     
     config_get hass_timeout_conn global timeout_conn
     config_get hass_timeout_disc global timeout_disc
+    source_name=`uci get system.@system[0].hostname`
     
     case $msg in 
         "AP-STA-CONNECTED")
@@ -117,18 +119,19 @@ push_event() {
             ;;
     esac
 
-    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout")
+    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout" "$source_name")
 }
 
 sync_state() {
     logger -t $0 -p debug "sync_state $@"
 
     config_get hass_timeout_conn global timeout_conn
+    source_name=`uci get system.@system[0].hostname`
 
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         maclist=`iw dev $interface station dump | grep Station | cut -f 2 -s -d" "`
         for mac in $maclist; do
-            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn") &
+            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn" "$source_name") &
         done
     done
 }

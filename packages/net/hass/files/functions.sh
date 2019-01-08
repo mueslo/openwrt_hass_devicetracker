@@ -73,13 +73,25 @@ function get_host_name {
 
 function push_event {
     logger -t $0 -p debug "push_event $@"
-    if [ "$#" -ne 3 ]; then
+    if [ "$#" -eq 3 ]; then
+        iface=$1
+        msg=$2
+        mac=$3
+    elif [ "$#" -eq 4 ]; then
+        # wlan1 STA-OPMODE-SMPS-MODE-CHANGED 84:c7:de:ed:be:ef off
+        if [ "$2" -ne "STA-OPMODE-SMPS-MODE-CHANGED" ]; then
+          err_msg "Unknown type of push_event"
+          exit 1
+        fi
+
+        iface=$1
+        msg=$2
+        mac=$3
+        status=$4
+    else
         err_msg "Illegal number of push_event parameters"
         exit 1
     fi
-    iface=$1
-    msg=$2
-    mac=$3
     
     config_get hass_timeout_conn global timeout_conn
     config_get hass_timeout_disc global timeout_disc
@@ -89,11 +101,14 @@ function push_event {
         "AP-STA-CONNECTED")
             timeout=$hass_timeout_conn
             ;;
-        "AP-STA-POLL-OK")
+        "AP-STA-CONNECTED")
             timeout=$hass_timeout_conn
             ;;
         "AP-STA-DISCONNECTED")
             timeout=$hass_timeout_disc
+            ;;
+        "STA-OPMODE-SMPS-MODE-CHANGED")
+            timeout=$hass_timeout_conn
             ;;
         *)
             logger -t $0 -p warning "push_event not handled"

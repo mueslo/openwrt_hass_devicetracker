@@ -23,7 +23,7 @@ Once the package is installed, you can modify `/etc/config/hass` to your liking 
 
 ### Authentication
 
-Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a long-lived access token that can be generated from the web UI. The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
+Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a long-lived access token that can be generated from the web UI (`token`, rather than `pw`, in the config file). The deprecated API password method continues to work as long you have an API password (`pw`) set. If both are configured, token auth will be preferred.
 
 ## Note on missed events
 

@@ -76,7 +76,12 @@ function is_connected {
 
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         if iw dev $interface station dump | grep Station | grep -q $mac; then
-            return 0
+			for ip in `ip neigh | grep $mac | awk '{print $1}'`; do
+				ping -c 1 $ip
+				if iw dev $interface station dump | grep Station | grep -q $mac; then
+					return 0
+				fi
+			done      
         fi
     done
 

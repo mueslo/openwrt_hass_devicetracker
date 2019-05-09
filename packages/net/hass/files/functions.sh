@@ -104,6 +104,7 @@ function push_event {
             timeout=$hass_timeout_conn
             ;;
         "AP-STA-DISCONNECTED")
+            sleep 2
             if is_connected $mac; then
                 logger -t $0 -p debug "push_event ignored as device is still online"
                 return

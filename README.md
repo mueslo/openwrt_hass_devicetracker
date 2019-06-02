@@ -1,6 +1,6 @@
 # openwrt_hass_devicetracker
 
-Package for a completely event-driven device/user presence tracker for [Home Assistant](https://github.com/home-assistant/home-assistant/) on an OpenWRT/LEDE access point. 
+Package for a completely event-driven device/user presence tracker for [Home Assistant](https://www.home-assistant.io/components/openwrt/) on an OpenWRT/LEDE access point. 
 
 
 ## Description
@@ -23,7 +23,7 @@ Once the package is installed, you can modify `/etc/config/hass` to your liking 
 
 ### Authentication
 
-Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a long-lived access token that can be generated from the web UI. The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
+Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token) that can be generated from the web UI. The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
 
 ## Note on missed events
 

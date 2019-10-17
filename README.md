@@ -15,11 +15,11 @@ A docker image is provided for convenience of generating an OpenWRT package with
 
 ## Installation
 
-Simply `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from [releases](https://github.com/mueslo/openwrt_hass_devicetracker/releases) and `opkg install <downloaded_file>`.
+Simply `opkg install hass-tracker` once it is added to the OpenWRT repositories. Until then, download a package from [releases](https://github.com/mueslo/openwrt_hass_devicetracker/releases) and `opkg install <downloaded_file>`.
 
 ### Configuration
 
-Once the package is installed, you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
+Once the package is installed, you can modify `/etc/config/hass-tracker` to your liking and start/enable the service via `service hass-tracker start` and `service hass-tracker enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
 
 ### Authentication
 
@@ -33,9 +33,9 @@ If Home Assistant or the OpenWRT access point is restarted frequently or unrelia
 #!/bin/sh
 
 source /lib/functions.sh
-config_load hass
+config_load hass-tracker
 
-source /usr/lib/hass/functions.sh
+source /usr/lib/hass-tracker/functions.sh
 sync_state
 ```
 

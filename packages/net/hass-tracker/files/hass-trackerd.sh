@@ -2,11 +2,11 @@
 # todo: hostapd white (black) list so we don't have to listen to all APs
 
 source /lib/functions.sh
-config_load hass
+config_load hass-tracker
 
 logger -t $0 -p info "Starting up"
 
-source /usr/lib/hass/functions.sh
+source /usr/lib/hass-tracker/functions.sh
 
 logger -t $0 -p info "Hooking onto existing interfaces"
 for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`
@@ -26,5 +26,5 @@ while read line ; do
         logger -t $0 -p info "$interface is up, setting up hook"
         register_hook $interface
     fi
-        
+
 done

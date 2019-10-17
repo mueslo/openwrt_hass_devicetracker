@@ -11,7 +11,7 @@ register_hook() {
     fi
     interface=$1
     
-    hostapd_cli -i$interface -a/usr/lib/hass/push_event.sh &
+    hostapd_cli -i$interface -a/usr/lib/hass-tracker/push_event.sh &
 }
 
 post() {

@@ -2,11 +2,11 @@
 
 START=50
 USE_PROCD=1
-PROG=/usr/bin/hassd.sh
-PIDFILE=/var/run/hass.pid
+PROG=/usr/bin/hass-trackerd.sh
+PIDFILE=/var/run/hass-tracker.pid
 
 start_service() {
-    procd_open_instance hass
+    procd_open_instance hass-tracker
     procd_set_param command $PROG
     procd_set_param pidfile $PIDFILE
     procd_close_instance

@@ -1,4 +1,4 @@
-err_msg {
+err_msg() {
     logger -t $0 -p error $@
     echo $1 1>&2
 }

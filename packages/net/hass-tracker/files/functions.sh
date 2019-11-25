@@ -1,9 +1,9 @@
-function err_msg {
+err_msg() {
     logger -t $0 -p error $@
     echo $1 1>&2
 }
 
-function register_hook {
+register_hook() {
     logger -t $0 -p debug "register_hook $@"
     if [ "$#" -ne 1 ]; then
         err_msg "register_hook missing interface"
@@ -11,10 +11,10 @@ function register_hook {
     fi
     interface=$1
     
-    hostapd_cli -i$interface -a/usr/lib/hass/push_event.sh &
+    hostapd_cli -i$interface -a/usr/lib/hass-tracker/push_event.sh &
 }
 
-function post {
+post() {
     logger -t $0 -p debug "post $@"
     if [ "$#" -ne 1 ]; then
         err_msg "POST missing payload"
@@ -46,7 +46,7 @@ function post {
     logger -t $0 -p $level "post response $resp"
 }
 
-function build_payload {
+build_payload() {
     logger -t $0 -p debug "build_payload $@"
     if [ "$#" -ne 3 ]; then
         err_msg "Invalid payload parameters"
@@ -60,17 +60,17 @@ function build_payload {
     echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\"}"
 }
 
-function get_ip {
+get_ip() {
     # get ip for mac
     grep "0x2\s\+$1" /proc/net/arp | cut -f 1 -s -d" "
 }
 
-function get_host_name {
+get_host_name() {
     # get hostname for mac
     nslookup "$(get_ip $1)" | grep -o "name = .*$" | cut -d ' ' -f 3
 }
 
-function is_connected {
+is_connected() {
     # check if MAC address is still connected to any wireless interface
     mac=$1
 
@@ -83,7 +83,7 @@ function is_connected {
     return 1
 }
 
-function push_event {
+push_event() {
     logger -t $0 -p debug "push_event $@"
     if [ "$#" -ne 3 ]; then
         err_msg "Illegal number of push_event parameters"
@@ -104,6 +104,7 @@ function push_event {
             timeout=$hass_timeout_conn
             ;;
         "AP-STA-DISCONNECTED")
+            sleep 2
             if is_connected $mac; then
                 logger -t $0 -p debug "push_event ignored as device is still online"
                 return
@@ -119,7 +120,7 @@ function push_event {
     post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout")
 }
 
-function sync_state {
+sync_state() {
     logger -t $0 -p debug "sync_state $@"
 
     config_get hass_timeout_conn global timeout_conn

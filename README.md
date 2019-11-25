@@ -1,6 +1,6 @@
 # openwrt_hass_devicetracker
 
-Package for a completely event-driven device/user presence tracker for [Home Assistant](https://github.com/home-assistant/home-assistant/) on an OpenWRT/LEDE access point. 
+Package for a completely event-driven device/user presence tracker for [Home Assistant](https://www.home-assistant.io/components/openwrt/) on an OpenWRT/LEDE access point. 
 
 
 ## Description
@@ -15,15 +15,15 @@ A docker image is provided for convenience of generating an OpenWRT package with
 
 ## Installation
 
-Simply `opkg install hass` once it is added to the OpenWRT repositories. Until then, download a package from [releases](https://github.com/mueslo/openwrt_hass_devicetracker/releases) and `opkg install <downloaded_file>`.
+Simply `opkg install hass-tracker` once it is added to the OpenWRT repositories. Until then, download a package from [releases](https://github.com/mueslo/openwrt_hass_devicetracker/releases) and `opkg install <downloaded_file>`.
 
 ### Configuration
 
-Once the package is installed, you can modify `/etc/config/hass` to your liking and start/enable the service via `service hass start` and `service hass enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
+Once the package is installed, you can modify `/etc/config/hass-tracker` to your liking and start/enable the service via `service hass-tracker start` and `service hass-tracker enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
 
 ### Authentication
 
-Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a long-lived access token that can be generated from the web UI (`token`, rather than `pw`, in the config file). The deprecated API password method continues to work as long you have an API password (`pw`) set. If both are configured, token auth will be preferred.
+Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token) that can be generated from the web UI (`token`, rather than `pw`, in the config file). The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
 
 ## Note on missed events
 
@@ -33,9 +33,9 @@ If Home Assistant or the OpenWRT access point is restarted frequently or unrelia
 #!/bin/sh
 
 source /lib/functions.sh
-config_load hass
+config_load hass-tracker
 
-source /usr/lib/hass/functions.sh
+source /usr/lib/hass-tracker/functions.sh
 sync_state
 ```
 

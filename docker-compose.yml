@@ -5,5 +5,5 @@ services:
             context: .
             dockerfile: build/Dockerfile
         volumes: 
-            - ./packages/net/hass:/home/openwrt/sdk/feeds/packages/net/hass:ro
+            - ./packages/net/hass-tracker:/home/openwrt/sdk/feeds/packages/net/hass-tracker:ro
             - ./build/bin:/home/openwrt/sdk/bin:rw

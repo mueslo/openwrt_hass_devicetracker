@@ -21,9 +21,7 @@ Simply `opkg install hass-tracker` once it is added to the OpenWRT repositories.
 
 Once the package is installed, you can modify `/etc/config/hass-tracker` to your liking and start/enable the service via `service hass-tracker start` and `service hass-tracker enable`. If you would like to use HTTPS, simply start your host string with the `https://` protocol specifier.
 
-### Authentication
-
-Due to auth changes in Home Assistant 0.78 there are now two authentication methods, the new and preferred option being a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token) that can be generated from the web UI. The deprecated API password method continues to work as long you have an API password set. If both are configured, token auth will be preferred.
+Authentication is done via a [long-lived access token](https://developers.home-assistant.io/docs/en/auth_api.html#long-lived-access-token) that can be generated from the web UI. This token needs to be set in the configuration file in the field `token`.
 
 ## Note on missed events
 

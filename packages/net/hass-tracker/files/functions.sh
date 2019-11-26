@@ -88,7 +88,7 @@ push_event() {
     
     config_get hass_timeout_conn global timeout_conn
     config_get hass_timeout_disc global timeout_disc
-    source_name=`uci get system.@system[0].hostname`
+    config_get hass_source_name global source_name `uci get system.@system[0].hostname`
     
     case $msg in 
         "AP-STA-CONNECTED")
@@ -116,7 +116,7 @@ sync_state() {
     logger -t $0 -p debug "sync_state $@"
 
     config_get hass_timeout_conn global timeout_conn
-    source_name=`uci get system.@system[0].hostname`
+    config_get hass_source_name global source_name `uci get system.@system[0].hostname`
 
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         maclist=`iw dev $interface station dump | grep Station | cut -f 2 -s -d" "`

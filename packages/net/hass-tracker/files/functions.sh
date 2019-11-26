@@ -101,7 +101,7 @@ push_event() {
         "AP-STA-CONNECTED")
             timeout=$hass_timeout_conn
             ;;
-        "AP-STA-CONNECTED")
+        "AP-STA-POLL-OK")
             timeout=$hass_timeout_conn
             ;;
         "AP-STA-DISCONNECTED")

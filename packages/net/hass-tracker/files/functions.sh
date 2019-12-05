@@ -109,7 +109,7 @@ push_event() {
             ;;
     esac
 
-    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout" "$source_name")
+    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout" "$hass_source_name")
 }
 
 sync_state() {
@@ -121,7 +121,7 @@ sync_state() {
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         maclist=`iw dev $interface station dump | grep Station | cut -f 2 -s -d" "`
         for mac in $maclist; do
-            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn" "$source_name") &
+            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn" "$hass_source_name") &
         done
     done
 }

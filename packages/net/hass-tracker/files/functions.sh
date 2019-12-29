@@ -10,7 +10,7 @@ register_hook() {
         exit 1
     fi
     interface=$1
-    
+
     hostapd_cli -i$interface -a/usr/lib/hass-tracker/push_event.sh &
 }
 
@@ -21,21 +21,24 @@ post() {
         exit 1
     fi
     payload=$1
-    
+
     config_get hass_host global host
     config_get hass_token global token
-    
-    resp=$(curl "$hass_host/api/services/device_tracker/see" -sfSX POST \
+    config_get hass_curl_insecure global curl_insecure
+
+    [ -n "$hass_curl_insecure" ] && curl_param="-k"
+
+    resp=$(curl "$hass_host/api/services/device_tracker/see" $curl_param -sfSX POST \
         -H 'Content-Type: application/json' \
         -H "Authorization: Bearer $hass_token" \
         --data-binary "$payload" 2>&1)
-    
+
     if [ $? -eq 0 ]; then
         level=debug
     else
         level=error
     fi
-    
+
     logger -t $0 -p $level "post response $resp"
 }
 
@@ -50,23 +53,53 @@ build_payload() {
     host=$2
     consider_home=$3
     source_name=$4
-    
+
     echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\",\"attributes\":{\"source_name\":\"$source_name\"}}"
 }
 
 get_ip() {
+    ret=$(get_ip_arp $@)
+    [ -z "$ret" ] && ret=$(get_ip_dhcp $@)
+    echo $ret
+}
+
+get_ip_arp() {
     # get ip for mac
-    grep "0x2\s\+$1" /proc/net/arp | cut -f 1 -s -d" "
+    grep "0x2\s\+$1" /proc/net/arp | cut -f 1 -s -d" " | grep -v '^169.254'
+}
+
+get_ip_dhcp() {
+    # get ip from dhcp table
+    leasefile="$(uci get dhcp.@dnsmasq[0].leasefile)"
+    grep "$1" "$leasefile" | cut -f 3 -s -d" "
 }
 
 get_host_name() {
+    ret=$(get_host_name_dhcp $@)
+    [ -z "$ret" ] && ret=$(get_host_name_dns $@)
+    echo $ret
+}
+
+get_host_name_dns() {
     # get hostname for mac
-    nslookup "$(get_ip $1)" | grep -o "name = .*$" | cut -d ' ' -f 3
+    domain="$(uci get dhcp.@dnsmasq[0].domain)"
+    nslookup "$(get_ip $1)" | grep -o "name = .*$" | cut -d ' ' -f 3 | sed -e "s/\\.$domain//"
+}
+
+get_host_name_dhcp() {
+    # get hostname for mac
+    leasefile="$(uci get dhcp.@dnsmasq[0].leasefile)"
+    grep "$1" "$leasefile" | cut -f 4 -s -d" "
 }
 
 push_event() {
     logger -t $0 -p debug "push_event $@"
-    if [ "$#" -eq 3 ]; then
+    if printf "$1" | grep -E '(add|old)'; then
+        # event pushed from dnsmasq. format: <add|old> <mac> <ip> <hostname>
+        mac=$2
+        hostname=$4
+        msg="DHCP-$1"
+    elif [ "$#" -eq 3 ]; then
         iface=$1
         msg=$2
         mac=$3
@@ -85,13 +118,16 @@ push_event() {
         err_msg "Illegal number of push_event parameters"
         exit 1
     fi
-    
+
     config_get hass_timeout_conn global timeout_conn
     config_get hass_timeout_disc global timeout_disc
     config_get hass_source_name global source_name `uci get system.@system[0].hostname`
     config_get hass_whitelist_devices global whitelist
-    
-    case $msg in 
+
+    case $msg in
+        DHCP*)
+            timeout=$hass_timeout_conn
+            ;;
         "AP-STA-CONNECTED")
             timeout=$hass_timeout_conn
             ;;
@@ -110,7 +146,7 @@ push_event() {
             ;;
     esac
 
-    hostname="$(get_host_name $mac)"
+    [ -z "$hostname" ] && hostname="$(get_host_name $mac)"
     if [ -n "$hass_whitelist_devices" ] && ! array_contains "$hostname" $hass_whitelist_devices; then
         logger -t $0 -p warning "push_event ignored, $hostname not in whitelist."
     elif [ -z "$hostname" ]; then
@@ -121,14 +157,15 @@ push_event() {
 }
 
 array_contains() {
+    logger -t $0 -p debug "array_contains $@"
     for i in `seq 2 $(($#+1))`; do
         next=$(eval "echo \$$i")
         if [ "${next}" == "${1}" ]; then
-            echo "y"
+            # echo "y"
             return 0
         fi
     done
-    echo "n"
+    # echo "n"
     return 1
 }
 

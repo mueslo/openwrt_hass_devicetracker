@@ -50,8 +50,10 @@ build_payload() {
     host=$2
     consider_home=$3
     source_name=$4
-    
-    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\",\"attributes\":{\"source_name\":\"$source_name\"}}"
+
+    config_get zone global zone
+
+    echo "{\"mac\":\"$mac\",\"host_name\":\"$host\",\"consider_home\":\"$consider_home\",\"source_type\":\"router\",\"attributes\":{\"source_name\":\"$source_name\"},\"location_name\":\"$zone\"}"
 }
 
 get_ip() {

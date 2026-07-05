@@ -26,7 +26,8 @@ set -euo pipefail
 bash ./setup.sh
 
 # Copy package into SDK feed
-cp -r /package feeds/packages/net/hass-tracker
+mkdir -p feeds/packages/net/hass-tracker
+cp -r /package/* feeds/packages/net/hass-tracker/
 
 # Install feed, enable apk output, build
 ./scripts/feeds update -i

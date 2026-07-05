@@ -24,7 +24,8 @@ jobs:
             bash -c '
               set -euo pipefail
               bash ./setup.sh
-              cp -r /package feeds/packages/net/hass-tracker
+              mkdir -p feeds/packages/net/hass-tracker
+              cp -r /package/* feeds/packages/net/hass-tracker/
               ./scripts/feeds update -i
               ./scripts/feeds install hass-tracker
               echo "CONFIG_USE_APK=y" >> .config

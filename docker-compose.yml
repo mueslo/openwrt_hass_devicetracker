@@ -4,16 +4,5 @@ services:
         build:
             context: .
             dockerfile: build/Dockerfile
-            args:
-                SDK_IMAGE_TAG: x86_64-main
-        volumes:
-            - ./build/bin:/output:rw
-
-    pkgbuild-arm:
-        build:
-            context: .
-            dockerfile: build/Dockerfile
-            args:
-                SDK_IMAGE_TAG: aarch64_cortex-a72-main
         volumes:
             - ./build/bin:/output:rw

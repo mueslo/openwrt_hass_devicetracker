@@ -11,17 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        sdk_tag: ["x86_64-main", "aarch64_cortex-a72-main"]
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up QEMU for cross-arch builds
-        if: matrix.sdk_tag != 'x86_64-main'
-        uses: docker/setup-qemu-action@v3
 
       - name: Build package
         run: |
@@ -29,7 +20,7 @@ jobs:
           docker run --rm \
             -v $PWD/packages/net/hass-tracker:/package:ro \
             -v $PWD/artifacts:/output:rw \
-            openwrt/sdk:${{ matrix.sdk_tag }} \
+            openwrt/sdk:x86_64-main \
             bash -c '
               set -euo pipefail
               bash ./setup.sh
@@ -52,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hass-tracker-${{ matrix.sdk_tag }}
+          name: hass-tracker
           path: artifacts/*.apk
 
   release:

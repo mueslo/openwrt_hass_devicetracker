@@ -16,6 +16,7 @@ echo "  Package:  ${PACKAGE_DIR}"
 echo "  Output:   ${OUTPUT_DIR}"
 
 docker run --rm \
+    --user root \
     -v "$(realpath "$PACKAGE_DIR"):/package:ro" \
     -v "$(realpath "$OUTPUT_DIR"):/output:rw" \
     "openwrt/sdk:${SDK_IMAGE_TAG}" \

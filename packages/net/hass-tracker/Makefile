@@ -6,7 +6,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=hass-tracker
-PKG_VERSION:=0.1.4
+PKG_VERSION:=0.1.5
 PKG_RELEASE:=1
 PKG_LICENSE:=GPL-3.0+
 PKG_MAINTAINER:=Johannes Falke <johannesfalke@gmail.com>
@@ -22,8 +22,9 @@ define Package/hass-tracker
 endef
 
 define Package/hass-tracker/description
-Wireless device tracker for Home Assistant (home-assistant.io). Monitors wifi APs for devices via hooking into hostapd events. The info is then sent to the Home Assistant API via a simple POST.
-
+Wireless device tracker for Home Assistant (home-assistant.io). Monitors wifi APs for
+devices via hooking into hostapd events. The info is then sent to the Home Assistant API
+via a simple POST.
 endef
 
 define Package/hass-tracker/conffiles

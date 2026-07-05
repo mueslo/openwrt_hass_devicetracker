@@ -14,13 +14,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # hass-tracker is PKGARCH=all (pure shell scripts), so any SDK works.
-        # x86_64 is fast (native), aarch64 exercises cross-arch (requires QEMU).
         sdk_tag: ["x86_64-main", "aarch64_cortex-a72-main"]
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up QEMU for cross-arch builds
         if: matrix.sdk_tag != 'x86_64-main'

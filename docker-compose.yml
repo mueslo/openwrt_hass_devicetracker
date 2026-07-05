@@ -1,9 +1,8 @@
-version: '2'
+version: '3'
 services:
     pkgbuild:
         build:
             context: .
             dockerfile: build/Dockerfile
-        volumes: 
-            - ./packages/net/hass-tracker:/home/openwrt/sdk/feeds/packages/net/hass-tracker:ro
-            - ./build/bin:/home/openwrt/sdk/bin:rw
+        volumes:
+            - ./build/bin:/output:rw

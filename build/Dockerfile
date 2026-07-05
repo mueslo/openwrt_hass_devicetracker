@@ -1,13 +1,25 @@
-FROM yhnw/openwrt-sdk:17.01-ar71xx
+ARG SDK_IMAGE_TAG=x86_64-main
 
-USER openwrt
-WORKDIR /home/openwrt/sdk
+FROM openwrt/sdk:${SDK_IMAGE_TAG} AS builder
 
-COPY build/.config /home/openwrt/sdk/.config
-COPY packages/net/hass-tracker /home/openwrt/sdk/feeds/packages/net/hass-tracker
+# The openwrt/sdk image is a lightweight wrapper: setup.sh downloads
+# the actual SDK tarball from downloads.openwrt.org and verifies it with GPG.
+RUN bash ./setup.sh
 
-# initial build to cache compilation of other packages
-RUN ./scripts/feeds update -i && ./scripts/feeds install hass-tracker && make package/hass-tracker/compile -j3
+# Copy package source into the SDK feed tree
+COPY packages/net/hass-tracker feeds/packages/net/hass-tracker/
 
-CMD make package/hass-tracker/compile -j3
+# Install feed, enable apk output, and build
+RUN ./scripts/feeds update -i \
+    && ./scripts/feeds install hass-tracker \
+    && echo "CONFIG_USE_APK=y" >> .config \
+    && echo "CONFIG_SIGNED_PACKAGES=n" >> .config \
+    && make defconfig \
+    && make package/hass-tracker/compile -j$(nproc)
 
+# Extract the .apk artifact
+RUN mkdir -p /output \
+    && cp $(find bin -name "hass-tracker*.apk" | head -1) /output/
+
+FROM scratch AS export
+COPY --from=builder /output /

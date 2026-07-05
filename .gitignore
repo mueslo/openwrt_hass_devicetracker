@@ -1,0 +1,11 @@
+# OpenWrt SDK extracted by build.sh
+openwrt-sdk/
+
+# Deprecated root-level files (superseded by packages/net/hass-tracker/)
+Makefile
+Makefile_new
+Makefile~
+files/
+
+# Build output
+build/bin/

@@ -89,6 +89,7 @@ push_event() {
     config_get hass_timeout_conn global timeout_conn
     config_get hass_timeout_disc global timeout_disc
     config_get hass_source_name global source_name `uci get system.@system[0].hostname`
+    config_get hass_whitelist_devices global whitelist
     
     case $msg in 
         "AP-STA-CONNECTED")
@@ -109,7 +110,26 @@ push_event() {
             ;;
     esac
 
-    post $(build_payload "$mac" "$(get_host_name $mac)" "$timeout" "$hass_source_name")
+    hostname="$(get_host_name $mac)"
+    if [ -n "$hass_whitelist_devices" ] && ! array_contains "$hostname" $hass_whitelist_devices; then
+        logger -t $0 -p warning "push_event ignored, $hostname not in whitelist."
+    elif [ -z "$hostname" ]; then
+        logger -t $0 -p warning "sync_state ignored, hostname for $mac is empty."
+    else
+        post $(build_payload "$mac" "$hostname" "$timeout" "$hass_source_name")
+    fi
+}
+
+array_contains() {
+    for i in `seq 2 $(($#+1))`; do
+        next=$(eval "echo \$$i")
+        if [ "${next}" == "${1}" ]; then
+            echo "y"
+            return 0
+        fi
+    done
+    echo "n"
+    return 1
 }
 
 sync_state() {
@@ -117,11 +137,19 @@ sync_state() {
 
     config_get hass_timeout_conn global timeout_conn
     config_get hass_source_name global source_name `uci get system.@system[0].hostname`
+    config_get hass_whitelist_devices global whitelist
 
     for interface in `iw dev | grep Interface | cut -f 2 -s -d" "`; do
         maclist=`iw dev $interface station dump | grep Station | cut -f 2 -s -d" "`
         for mac in $maclist; do
-            post $(build_payload "$mac" "$(get_host_name $mac)" "$hass_timeout_conn" "$hass_source_name") &
+            hostname="$(get_host_name $mac)"
+            if [ -n "$hass_whitelist_devices" ] && ! array_contains "$hostname" $hass_whitelist_devices; then
+                logger -t $0 -p warning "sync_state ignored, $hostname not in whitelist."
+            elif [ -z "$hostname" ]; then
+                logger -t $0 -p warning "sync_state ignored, hostname for $mac is empty."
+            else
+                post $(build_payload "$mac" "$hostname" "$hass_timeout_conn" "$hass_source_name") &
+            fi
         done
     done
 }
